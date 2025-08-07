@@ -1,39 +1,71 @@
+version: '3.8'
+
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: symfony
-      MYSQL_USER: symfony
-      MYSQL_PASSWORD: symfony
+  frontend:
+    build:
+      context: ./frontend
     ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
+      - "3000:80"
+    depends_on:
+      - backend
 
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
-    container_name: symfony-backend
-    depends_on:
-      - mysql
     ports:
       - "8000:80"
-    volumes:
-      - ./backend:/var/www/html
-    environment:
-      DATABASE_URL: mysql://symfony:symfony@mysql:3306/symfony
+    depends_on:
+      - mariadb
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: react-frontend
-    ports:
-      - "3000:80"
+  mariadb:
+    image: mariadb:10.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: crud_symfony
+    volumes:
+      - mariadb_data:/var/lib/mysql
 
 volumes:
-  mysql-data:
+  mariadb_data:
+
+
+
+#services:
+#  mysql:
+#    image: mysql:8
+#    container_name: mysql
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: symfony
+#      MYSQL_USER: symfony
+#      MYSQL_PASSWORD: symfony
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - mysql-data:/var/lib/mysql
+#
+#  backend:
+#    build:
+#      context: ./backend
+#      dockerfile: Dockerfile
+#    container_name: symfony-backend
+#    depends_on:
+#      - mysql
+#    ports:
+#      - "8000:80"
+#    volumes:
+#      - ./backend:/var/www/html
+#    environment:
+#      DATABASE_URL: mysql://symfony:symfony@mysql:3306/symfony
+#
+#  frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    container_name: react-frontend
+#    ports:
+#      - "3000:80"
+#
+#volumes:
+#  mysql-data:
